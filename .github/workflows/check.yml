@@ -1,0 +1,33 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Syntax check
+        run: node --check eval/run.cjs
+      - name: Validate case definitions
+        run: |
+          node -e "
+          const fs=require('fs');
+          const cases=JSON.parse(fs.readFileSync('eval/cases.json','utf8'));
+          const ids=new Set();
+          for (const c of cases) {
+            if (!c.id||!c.prompt||!Array.isArray(c.checks)) throw new Error('bad case '+JSON.stringify(c.id));
+            if (ids.has(c.id)) throw new Error('duplicate id '+c.id);
+            ids.add(c.id);
+            for (const chk of c.checks) if (!chk.type) throw new Error('check without type in '+c.id);
+          }
+          console.log(cases.length+' cases ok');
+          "
+      - name: Dry run
+        run: node eval/run.cjs --dry-run

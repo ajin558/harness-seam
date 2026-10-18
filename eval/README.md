@@ -11,6 +11,25 @@ node run.cjs
 node run.cjs --only c3_chain
 ```
 
+### Other modes
+
+```powershell
+node run.cjs --dry-run                    # list cases, execute nothing
+node run.cjs --k 3                        # three attempts per case (pass rate)
+node run.cjs --compare runs/A runs/B      # diff two runs (accepts dir or results.json)
+```
+
+`--compare` prints steps, tool calls, wall time and pass/fail deltas per case,
+and flags a case that flipped:
+
+```
+case            A                     B                     delta
+c3_chain        PASS s4 t3 84s        PASS s5 t3 91s        +1 steps, +7s
+c5_error        PASS s2 t1 37s        FAIL s3 t2 55s        +1 steps, +18s -REGRESSED
+```
+
+That is the whole point of the kit: run before a change, run after, compare.
+
 Configuration is by environment variable (all optional):
 
 | Variable | Default |

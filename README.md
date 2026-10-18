@@ -99,8 +99,18 @@ profiles/
   minimal/      # headless profile: one-shot tasks, no HTTP layer
 eval/           # six cases, runner, objective checks
 patches/        # small fixes for OpenAI-compatible gateways
-docs/           # how the model seam works
+docs/           # how the model seam works, and troubleshooting
 ```
+
+## Troubleshooting
+
+Four failures that cost us real time, all documented in
+[docs/troubleshooting.md](docs/troubleshooting.md):
+
+- tools blocked by `SetNamedSecurityInfoW failed (Win32 5)`
+- `0 tok/s` because the gateway omits streaming `usage`
+- `profile "desktop" is managed exclusively by the Electron application`
+- tools never fire (three different causes)
 
 ## Limitations
 
