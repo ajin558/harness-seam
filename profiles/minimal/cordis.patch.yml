@@ -1,0 +1,38 @@
+# minimal profile: one-shot CLI, no HTTP layer, no browser.
+# Used by the eval kit. Copy over %USERPROFILE%\.dsh\profiles\<name>\cordis.patch.yml
+
+- id: llm-pi-ai
+  name: '@deepseek-ai/dsh-llm-pi-ai'
+  config:
+    providers:
+      my-gateway:
+        apiKeyEnv: MY_GATEWAY_KEY
+        api: openai-completions
+        baseURL: https://your-gateway.example/v1
+        defaultContextWindow: 262144
+        defaultMaxTokens: 32768
+        models:
+          - id: your-model-id
+            contextWindow: 262144
+
+- id: agent-default-model
+  name: '@deepseek-ai/dsh-agent-default-model'
+  config:
+    provider: my-gateway
+    model: your-model-id
+
+# Headless still needs a permission preset, or tool calls fail with Win32 5.
+- id: permission
+  name: '@deepseek-ai/dsh-permission-presets'
+  config:
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: ask
+      workspace-write:
+        sandbox: workspace-write
+        approval: ask
+      danger-full-access:
+        sandbox: danger-full-access
+        approval: never
+    defaultPreset: workspace-write

@@ -1,0 +1,26 @@
+# NOTICE
+
+This project configures and evaluates **DeepSeek Harness**, which is distributed
+under the MIT License:
+
+    MIT License
+    Copyright (c) 2026 DeepSeek
+
+    https://github.com/deepseek-ai/deepseek-harness
+
+This repository contains **no** DeepSeek Harness source code. It contains
+configuration snippets (`profiles/`), documentation, and an independent
+evaluation runner. Where a file quotes an upstream package or interface name,
+that name is used nominatively to describe compatibility.
+
+## Third-party inspiration
+
+The evaluation approach (fixed task set + objective checks, harness as the tunable
+layer) was informed by public research on agent harnessing, including
+`google-research/harness2` (Apache-2.0). No code from that project is included.
+
+## Trademarks
+
+"DeepSeek" and "DeepSeek Harness" are trademarks of their owner. This project is
+not affiliated with, endorsed by, or sponsored by DeepSeek. The project name
+`harness-seam` is independent of it.

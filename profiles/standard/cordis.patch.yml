@@ -1,0 +1,50 @@
+# standard profile: web UI, ~32 tools, one model route.
+# Copy this file over %USERPROFILE%\.dsh\profiles\<name>\cordis.patch.yml
+# and replace the placeholders. Verify first:
+#   dsh --profile <name> --dump-config | Select-String "llm-pi-ai|agent-default-model"
+
+- id: llm-pi-ai
+  name: '@deepseek-ai/dsh-llm-pi-ai'
+  config:
+    providers:
+      my-gateway:
+        displayName: My Gateway
+        apiKeyEnv: MY_GATEWAY_KEY          # credential reference, not the secret
+        api: openai-completions            # openai-completions | openai-responses | anthropic-messages
+        baseURL: https://your-gateway.example/v1
+        defaultContextWindow: 262144
+        defaultMaxTokens: 32768
+        models:
+          - id: your-model-id              # must match what the gateway accepts
+            name: Your Model
+            contextWindow: 262144
+
+      # Optional additional routes; each key is a route name a request can select.
+      # openai:
+      #   apiKeyEnv: OPENAI_API_KEY
+      # anthropic:
+      #   apiKeyEnv: ANTHROPIC_API_KEY
+
+- id: agent-default-model
+  name: '@deepseek-ai/dsh-agent-default-model'
+  config:
+    provider: my-gateway
+    model: your-model-id
+
+# Required for the web profile to run tools at all: without a declared preset the
+# sandbox tries to grant itself write access and fails with
+#   SetNamedSecurityInfoW failed (Win32 5)
+- id: permission
+  name: '@deepseek-ai/dsh-permission-presets'
+  config:
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: ask
+      workspace-write:
+        sandbox: workspace-write
+        approval: ask
+      danger-full-access:
+        sandbox: danger-full-access
+        approval: never
+    defaultPreset: workspace-write

@@ -1,0 +1,65 @@
+[
+  {
+    "id": "c1_text",
+    "name": "Text only, no tools",
+    "prompt": "Without using any tools, reply with exactly this token and nothing else: ALPHA_BRAVO",
+    "checks": [
+      { "type": "stdout_contains", "value": "ALPHA_BRAVO" },
+      { "type": "tool_calls_max", "value": 0 }
+    ]
+  },
+  {
+    "id": "c2_read",
+    "name": "Single tool: read a fact",
+    "setup": [
+      { "path": "eval-fixtures/sample.md", "content": "# Sample\n\nMODEL_ID: seam-alpha\n\nThis file is a fixture.\n" }
+    ],
+    "prompt": "Read {{ROOT}}/eval-fixtures/sample.md and reply with the value of MODEL_ID, nothing else.",
+    "checks": [
+      { "type": "stdout_contains", "value": "seam-alpha" },
+      { "type": "tool_calls_min", "value": 1 }
+    ]
+  },
+  {
+    "id": "c3_chain",
+    "name": "Tool chain: copy, append, verify",
+    "setup": [
+      { "path": "eval-fixtures/lines.txt", "content": "line 1\nline 2\nline 3\nline 4\nline 5\nline 6\nline 7\nline 8\nline 9\nline 10\n" }
+    ],
+    "prompt": "Do this with separate tool calls, never combining steps: (1) copy {{ROOT}}/eval-fixtures/lines.txt to {{ROOT}}/eval-fixtures/lines-out.txt; (2) append the line 'line 11' to lines-out.txt; (3) read lines-out.txt. Finally reply exactly: CHAIN_OK <number of lines>",
+    "checks": [
+      { "type": "stdout_contains", "value": "CHAIN_OK 11" },
+      { "type": "file_lines", "path": "{{ROOT}}/eval-fixtures/lines-out.txt", "equals": 11 },
+      { "type": "file_lines", "path": "{{ROOT}}/eval-fixtures/lines.txt", "equals": 10 },
+      { "type": "tool_calls_min", "value": 2 }
+    ]
+  },
+  {
+    "id": "c4_instruction",
+    "name": "Instruction adherence: no digits",
+    "prompt": "Run pwsh to get the current time. Then write your final reply describing that time in words only. Your final reply must contain no digit characters at all.",
+    "checks": [
+      { "type": "stdout_no_digits" },
+      { "type": "tool_calls_min", "value": 1 }
+    ]
+  },
+  {
+    "id": "c5_error",
+    "name": "Error recovery: try once",
+    "prompt": "Use pwsh to read {{ROOT}}/eval-fixtures/does-not-exist.txt. Paste the exact error message. Try exactly once and do not attempt any other approach.",
+    "checks": [
+      { "type": "stdout_contains", "value": "does-not-exist.txt" },
+      { "type": "tool_calls_max", "value": 1 }
+    ]
+  },
+  {
+    "id": "c6_long",
+    "name": "Long task: six separate writes",
+    "prompt": "Do exactly 6 separate steps, one pwsh tool call per step, never combining: for N in 1..6 run Add-Content -Path {{ROOT}}/eval-fixtures/eval-lines.txt -Value 'row N'. Then read the file and reply exactly: LONG_OK <number of lines>",
+    "checks": [
+      { "type": "stdout_contains", "value": "LONG_OK 6" },
+      { "type": "file_lines", "path": "{{ROOT}}/eval-fixtures/eval-lines.txt", "equals": 6 },
+      { "type": "tool_calls_min", "value": 6 }
+    ]
+  }
+]
