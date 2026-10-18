@@ -1,11 +1,13 @@
 # harness-seam
 
+English | [中文](README.zh.md)
+
 **Model-agnostic profiles and an evaluation kit for DeepSeek Harness (MIT).**
 
 Run the same agent harness — same tools, same loop, same session model — on a different model,
 then measure whether it still feels the same.
 
-> Status: P1 scaffold. Profile recipes and the eval kit are usable today; docs are being written.
+> Status: P1. Tested on Windows with DeepSeek Harness 0.2.1-rc.2.
 
 ---
 
@@ -20,6 +22,39 @@ This repo gives you two things:
    without touching the installed app.
 2. **An eval kit** — six fixed cases with objective pass/fail checks — so "it feels worse"
    becomes a table.
+
+## What this adds, and what it does not
+
+DeepSeek Harness already ships a multi-provider adapter
+(`@deepseek-ai/dsh-llm-pi-ai`). Pointing it at your own endpoint is a
+configuration change, not a capability this repo invents.
+
+What is actually missing — and what is here:
+
+| Gap | Here |
+|---|---|
+| Profile files that work, including the permission-preset row tools need | `profiles/` |
+| A way to tell whether a model still behaves well in the harness | `eval/` |
+| Streaming `usage` for gateways that omit it | `patches/` |
+| A map of how profiles compose and where the model seam sits | `docs/` |
+
+If all you want is to switch models, one patch file is enough. Everything else
+exists to answer a second question: **did it get worse?**
+
+## How the pieces fit
+
+```mermaid
+flowchart LR
+  P["profile package.json<br/>(bundles)"] --> C[composed plugin tree]
+  Y["cordis.patch.yml<br/>(your layer)"] --> C
+  C --> L[agent loop]
+  C --> T[tool runtime]
+  C --> S[session log]
+  C --> M["ctx.llm (the seam)"]
+  M --> A1[openai-completions]
+  M --> A2[anthropic-messages]
+  M --> A3[openai-responses]
+```
 
 ## Quick start
 
