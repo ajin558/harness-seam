@@ -2,6 +2,9 @@
 
 English | [中文](README.zh.md)
 
+![check](https://github.com/ajin558/harness-seam/actions/workflows/check.yml/badge.svg)
+![license](https://img.shields.io/badge/license-MIT-blue)
+
 **Model-agnostic profiles and an evaluation kit for DeepSeek Harness (MIT).**
 
 Run the same agent harness — same tools, same loop, same session model — on a different model,
